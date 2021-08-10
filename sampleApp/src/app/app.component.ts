@@ -9,18 +9,14 @@
  */
 
 import {Component} from '@angular/core';
-import { identity, Subscription } from "rxjs";
-import { DataService, Data, StatesData  } from "./data.service";
+import { DataService } from "./data.service";
+import { GoogleChartInterface } from 'ng2-google-charts';
 
-interface Region {
-  value: string;
-  viewValue: string;
-}
+
 interface Weeks {
   value: number;
   viewValue: string;
 }
-
 
 @Component({
   selector: 'app-root',
@@ -28,8 +24,161 @@ interface Weeks {
   styleUrls: ['./app.component.css']  
 })
 export class AppComponent {
-  data: Data[] = [{cases: 0, deaths: 0, recovered: 0}];
-  regions: Region[] = [
+  
+  weeks: Weeks[] = [
+    {value: 27, viewValue: 'Latest'},
+    {value: 20, viewValue: '1 Week back'},
+    {value: 13, viewValue: '2 Weeks back'},
+    {value: 7, viewValue: '3 Weeks back'},
+    {value: 1, viewValue: '4 Weeks back'}
+  ];
+  selectedWeek: number = 27;
+  states_cases = [['State','COVID-Confirmed Cases: ']];
+  states_deaths = [['State','COVID-Confirmed Deaths: ']];
+  states_recovered = [['State','COVID-Confirmed Recovered: ']];
+  response: any[]=[];
+  mapReady=false;
+  public cases: GoogleChartInterface = {
+    chartType: 'GeoChart',
+    dataTable: this.states_cases,
+    options: {
+      region: 'DE',
+      colorAxis: {colors: ['#00F919', '#0FFFE4', '#1FA20F','#156930','#033E3B']},
+      resolution: 'provinces',
+      backgroundColor: '#00000',
+      datalessRegionColor: '#00000',
+      defaultColor: '#00000',
+      'height': 600,
+    }
+  };
+  public deaths: GoogleChartInterface = {
+    chartType: 'GeoChart',
+    dataTable: this.states_deaths,
+    options: {
+      region: 'DE', 
+      colorAxis: {colors: ['#00F919', '#0FFFE4', '#1FA20F','#156930','#033E3B']},
+      resolution: 'provinces',
+      backgroundColor: '#00000',
+      datalessRegionColor: '#00000',
+      defaultColor: '#00000',
+      'height': 600,
+    }
+  };
+  public recovered: GoogleChartInterface = {
+    chartType: 'GeoChart',
+    dataTable: this.states_recovered,
+    options: {
+      region: 'DE', 
+      colorAxis: {colors: ['#00F919', '#0FFFE4', '#1FA20F','#156930','#033E3B']},
+      resolution: 'provinces',
+      backgroundColor: '#00000',
+      datalessRegionColor: '#00000',
+      defaultColor: '#00000',
+      'height': 600,
+    }
+  };
+  constructor(public serv: DataService){}
+  ngOnInit(){
+    this.displayData(27);
+  }
+  displayData(week:number) {
+    console.log(week)    
+    this.serv.getStatesRecovered().subscribe((res)=>{
+      this.pushRecoveredData(res, week);
+      },
+      (err)=>{
+        console.log(err)
+      }
+    );
+    this.serv.getStatesCases().subscribe((res)=>{
+      this.pushCaseData(res, week);
+      },
+      (err)=>{
+        console.log(err)
+      }
+    ); 
+    this.serv.getStatesDeaths().subscribe((res)=>{
+        this.pushDeathData(res, week);
+      },
+      (err)=>{
+        console.log(err)
+      }
+    );
+    
+  }
+  
+  pushCaseData(res, week: number) {
+    this.states_cases.push(
+      [res.data.BB.name, this.states_cases[0][1] + String(res.data.BB.history[week].cases)],
+      [res.data.BE.name, this.states_cases[0][1] + String(res.data.BE.history[week].cases)],
+      [res.data.BW.name, this.states_cases[0][1] + String(res.data.BW.history[week].cases)],
+      [res.data.BY.name, this.states_cases[0][1] + String(res.data.BY.history[week].cases)],
+      [res.data.HB.name, this.states_cases[0][1] + String(res.data.HB.history[week].cases)],
+      [res.data.HE.name, this.states_cases[0][1] + String(res.data.HE.history[week].cases)],
+      [res.data.HH.name, this.states_cases[0][1] + String(res.data.HH.history[week].cases)],
+      [res.data.MV.name, this.states_cases[0][1] + String(res.data.MV.history[week].cases)],
+      [res.data.NI.name, this.states_cases[0][1] + String(res.data.NI.history[week].cases)],
+      [res.data.NW.name, this.states_cases[0][1] + String(res.data.NW.history[week].cases)],
+      [res.data.RP.name, this.states_cases[0][1] + String(res.data.RP.history[week].cases)],
+      [res.data.SH.name, this.states_cases[0][1] + String(res.data.SH.history[week].cases)],
+      [res.data.SL.name, this.states_cases[0][1] + String(res.data.SL.history[week].cases)],
+      [res.data.SN.name, this.states_cases[0][1] + String(res.data.SN.history[week].cases)],
+      [res.data.ST.name, this.states_cases[0][1] + String(res.data.ST.history[week].cases)],
+      [res.data.TH.name, this.states_cases[0][1] + String(res.data.TH.history[week].cases)],
+    );   
+    //force a redraw
+    this.mapReady=true;
+    this.cases.component.draw();
+  }
+
+  pushRecoveredData(res, week: number) {
+    this.states_recovered.push(
+      [res.data.BB.name, this.states_cases[0][1] + String(res.data.BB.history[week].recovered)],
+      [res.data.BE.name, this.states_cases[0][1] + String(res.data.BE.history[week].recovered)],
+      [res.data.BW.name, this.states_cases[0][1] + String(res.data.BW.history[week].recovered)],
+      [res.data.BY.name, this.states_cases[0][1] + String(res.data.BY.history[week].recovered)],
+      [res.data.HB.name, this.states_cases[0][1] + String(res.data.HB.history[week].recovered)],
+      [res.data.HE.name, this.states_cases[0][1] + String(res.data.HE.history[week].recovered)],
+      [res.data.HH.name, this.states_cases[0][1] + String(res.data.HH.history[week].recovered)],
+      [res.data.MV.name, this.states_cases[0][1] + String(res.data.MV.history[week].recovered)],
+      [res.data.NI.name, this.states_cases[0][1] + String(res.data.NI.history[week].recovered)],
+      [res.data.NW.name, this.states_cases[0][1] + String(res.data.NW.history[week].recovered)],
+      [res.data.RP.name, this.states_cases[0][1] + String(res.data.RP.history[week].recovered)],
+      [res.data.SH.name, this.states_cases[0][1] + String(res.data.SH.history[week].recovered)],
+      [res.data.SL.name, this.states_cases[0][1] + String(res.data.SL.history[week].recovered)],
+      [res.data.SN.name, this.states_cases[0][1] + String(res.data.SN.history[week].recovered)],
+      [res.data.ST.name, this.states_cases[0][1] + String(res.data.ST.history[week].recovered)],
+      [res.data.TH.name, this.states_cases[0][1] + String(res.data.TH.history[week].recovered)],
+    );    
+    this.mapReady=true;
+    this.recovered.component.draw();
+  }
+
+  pushDeathData(res, week: number) {
+    this.states_deaths.push(
+      [res.data.BB.name, this.states_cases[0][1] + String(res.data.BB.history[week].deaths)],
+      [res.data.BE.name, this.states_cases[0][1] + String(res.data.BE.history[week].deaths)],
+      [res.data.BW.name, this.states_cases[0][1] + String(res.data.BW.history[week].deaths)],
+      [res.data.BY.name, this.states_cases[0][1] + String(res.data.BY.history[week].deaths)],
+      [res.data.HB.name, this.states_cases[0][1] + String(res.data.HB.history[week].deaths)],
+      [res.data.HE.name, this.states_cases[0][1] + String(res.data.HE.history[week].deaths)],
+      [res.data.HH.name, this.states_cases[0][1] + String(res.data.HH.history[week].deaths)],
+      [res.data.MV.name, this.states_cases[0][1] + String(res.data.MV.history[week].deaths)],
+      [res.data.NI.name, this.states_cases[0][1] + String(res.data.NI.history[week].deaths)],
+      [res.data.NW.name, this.states_cases[0][1] + String(res.data.NW.history[week].deaths)],
+      [res.data.RP.name, this.states_cases[0][1] + String(res.data.RP.history[week].deaths)],
+      [res.data.SH.name, this.states_cases[0][1] + String(res.data.SH.history[week].deaths)],
+      [res.data.SL.name, this.states_cases[0][1] + String(res.data.SL.history[week].deaths)],
+      [res.data.SN.name, this.states_cases[0][1] + String(res.data.SN.history[week].deaths)],
+      [res.data.ST.name, this.states_cases[0][1] + String(res.data.ST.history[week].deaths)],
+      [res.data.TH.name, this.states_cases[0][1] + String(res.data.TH.history[week].deaths)],
+    );
+    this.mapReady=true;
+    this.deaths.component.draw();
+  }
+  
+  /**
+   * regions: Region[] = [
     {value: 'DE', viewValue: 'Germany'},
     {value: 'SH', viewValue: 'Schleswig-Holstein'},
     {value: 'HH', viewValue: 'Hamburg'},
@@ -48,144 +197,6 @@ export class AppComponent {
     {value: 'ST', viewValue: 'Sachsen-Anhalt'},
     {value: 'TH', viewValue: 'Thüringen'}
   ];
-  weeks: Weeks[] = [
-    {value: 27, viewValue: 'Latest'},
-    {value: 20, viewValue: '1 Week back'},
-    {value: 13, viewValue: '2 Weeks back'},
-    {value: 7, viewValue: '3 Weeks back'},
-    {value: 1, viewValue: '4 Weeks back'}
-  ];
-  selectedValue: string = "DE";
-  selectedWeek: number = 27;
-  private serviceSubscription: Subscription | undefined;
-  displayedColumns: string[] = ['region', 'cases', 'deaths', 'recovered'];
-  dataSource = this.data;
-
-  constructor(private dataService: DataService) {
-  }
-
-  changeClient() {
-    switch(this.selectedValue) { 
-      case "SH": { 
-        this.data[0].region = "SH"
-        this.data[0].cases = this.dataService.statesCases.data.SH.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.SH.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.SH.history[this.selectedWeek].recovered;        
-        break; 
-      } 
-      case "HH": { 
-        this.data[0].cases = this.dataService.statesCases.data.HH.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.HH.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.HH.history[this.selectedWeek].recovered;
-        break; 
-      }
-      case "NI": { 
-        this.data[0].cases = this.dataService.statesCases.data.NI.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.NI.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.NI.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "HB": { 
-        this.data[0].cases = this.dataService.statesCases.data.HB.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.HB.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.HB.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "NW": { 
-        this.data[0].cases = this.dataService.statesCases.data.NW.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.NW.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.NW.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "HE": { 
-        this.data[0].cases = this.dataService.statesCases.data.HE.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.HE.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.HE.history[this.selectedWeek].recovered; 
-        break; 
-      }
-      case "RP": { 
-        this.data[0].cases = this.dataService.statesCases.data.RP.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.RP.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.RP.history[this.selectedWeek].recovered;  
-        break; 
-      } 
-      case "BW": { 
-        this.data[0].cases = this.dataService.statesCases.data.BW.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.BW.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.BW.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "BY": { 
-        this.data[0].cases = this.dataService.statesCases.data.BY.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.BY.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.BY.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "SL": { 
-        this.data[0].cases = this.dataService.statesCases.data.SL.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.SL.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.SL.history[this.selectedWeek].recovered; 
-        break; 
-      }
-      case "BE": { 
-        this.data[0].cases = this.dataService.statesCases.data.BE.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.BE.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.BE.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "BB": { 
-        this.data[0].cases = this.dataService.statesCases.data.BB.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.BB.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.BB.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "MV": { 
-        this.data[0].cases = this.dataService.statesCases.data.MV.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.MV.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.MV.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "SN": { 
-        this.data[0].cases = this.dataService.statesCases.data.SN.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.SN.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.SN.history[this.selectedWeek].recovered; 
-        break; 
-      }
-      case "ST": { 
-        this.data[0].cases = this.dataService.statesCases.data.ST.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.ST.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.ST.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-      case "TH": { 
-        this.data[0].cases = this.dataService.statesCases.data.TH.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.statesDeaths.data.TH.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.statesRecovered.data.TH.history[this.selectedWeek].recovered; 
-        break; 
-      }
-      case "DE": { 
-        this.data[0].cases = this.dataService.germanyCases.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.germanyDeaths.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.germanyRecovered.history[this.selectedWeek].recovered;  
-        break; 
-      } 
-      default: { 
-        this.data[0].cases = this.dataService.germanyCases.history[this.selectedWeek].cases;
-        this.data[0].deaths = this.dataService.germanyDeaths.history[this.selectedWeek].deaths;
-        this.data[0].recovered = this.dataService.germanyRecovered.history[this.selectedWeek].recovered; 
-        break; 
-      } 
-    }
-  }
-
-  ngOnInit() {
-    this.dataService.getData();
-  }
-
-  ngOnDestroy() {
-    if(this.serviceSubscription !== undefined) {
-      this.serviceSubscription.unsubscribe();
-    }    
-  }
+   */
 }
 

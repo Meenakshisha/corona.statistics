@@ -1,49 +1,23 @@
-<div class ="some">
-<form >
-  <mat-form-field>
-    <mat-select [(ngModel)]="selectedWeek" name="food" (selectionChange)="changeClient()">
-      <mat-option *ngFor="let week of weeks" [value]="week.value">
-        {{week.viewValue}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</form>
-<form>
-  <mat-form-field>
-    <mat-select [(ngModel)]="selectedValue" name="food" (selectionChange)="changeClient()">
-      <mat-option *ngFor="let region of regions" [value]="region.value">
-        {{region.viewValue}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</form>
+<h2>
+  <form >
+    <mat-form-field>
+      <mat-select [(ngModel)]="selectedWeek" name="week" (selectionChange)="displayData($event.value)">
+        <mat-option *ngFor="let week of weeks" [value]="week.value">
+          {{week.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</h2>
+<div class = "map" >
+  <h2>Covid confirmed Cases!</h2>
+  <google-chart #mychart [data]="cases" *ngIf=mapReady></google-chart>
 </div>
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <!-- Position Column -->
-  <ng-container matColumnDef="region">
-    <th mat-header-cell *matHeaderCellDef> Region </th>
-    <td mat-cell *matCellDef="let element"> {{element.region}} </td>
-  </ng-container>
-
-  <!-- Cases -->
-  <ng-container matColumnDef="cases">
-    <th mat-header-cell *matHeaderCellDef> Cases </th>
-    <td mat-cell *matCellDef="let element"> {{element.cases}} </td>
-  </ng-container>
-
-  <!-- Deaths -->
-  <ng-container matColumnDef="deaths">
-    <th mat-header-cell *matHeaderCellDef> Deaths </th>
-    <td mat-cell *matCellDef="let element"> {{element.deaths}} </td>
-  </ng-container>
-
-  <!-- Recovered -->
-  <ng-container matColumnDef="recovered">
-    <th mat-header-cell *matHeaderCellDef> Recovered </th>
-    <td mat-cell *matCellDef="let element"> {{element.recovered}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-
+<div class = "map">
+  <h2>Covid confirmed Deaths!</h2> 
+  <google-chart [data]="deaths" *ngIf=mapReady></google-chart>
+</div>
+<div class = "map">
+  <h2>Covid confirmed Recoveries!</h2>  
+  <google-chart [data]="recovered" *ngIf=mapReady></google-chart>
+</div>

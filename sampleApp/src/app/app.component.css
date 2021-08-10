@@ -1,10 +1,11 @@
 .class {
   position: center;
 }
- table {
-    width: 100%;
-  }
-  
+.map {
+  display: inline-block;
+  width: 500px;
+}
+
   tr.example-detail-row {
     height: 0;
   }

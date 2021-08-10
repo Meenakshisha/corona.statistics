@@ -21,6 +21,7 @@ import { FormsModule } from '@angular/forms';
 import {  MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { SplashScreenComponent } from './splash-screen/splash-screen.component';
+import { Ng2GoogleChartsModule, GoogleChartsSettings  } from 'ng2-google-charts';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { SplashScreenComponent } from './splash-screen/splash-screen.component';
     MatSelectModule,
     FormsModule,
     MatButtonModule,
-    MatIconModule 
+    MatIconModule,
+    Ng2GoogleChartsModule    
   ],
   providers: [],
   bootstrap: [AppComponent]

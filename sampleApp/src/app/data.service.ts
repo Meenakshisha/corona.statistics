@@ -10,8 +10,9 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 export interface Data {
+  statewise: any[];
   region?: string;
   cases?: number;
   deaths?: number;
@@ -28,6 +29,7 @@ export interface GermanyData {
 export interface StatesData {
   data: {
     SH: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -35,6 +37,7 @@ export interface StatesData {
       }[]
     },
     HH: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -42,6 +45,7 @@ export interface StatesData {
       }[]
     },
     NI: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -49,6 +53,7 @@ export interface StatesData {
       }[]
     },
     HB: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -56,6 +61,7 @@ export interface StatesData {
       }[]
     },
     NW: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -63,6 +69,7 @@ export interface StatesData {
       }[]
     },
     HE: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -70,6 +77,7 @@ export interface StatesData {
       }[]
     },
     RP: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -77,6 +85,7 @@ export interface StatesData {
       }[]
     },
     BW: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -84,6 +93,7 @@ export interface StatesData {
       }[]
     },
     BY: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -91,6 +101,7 @@ export interface StatesData {
       }[]
     },
     SL: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -98,6 +109,7 @@ export interface StatesData {
       }[]
     },
     BE: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -105,6 +117,7 @@ export interface StatesData {
       }[]
     },
     BB: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -112,6 +125,7 @@ export interface StatesData {
       }[]
     },
     MV: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -119,6 +133,7 @@ export interface StatesData {
       }[]
     },
     SN: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -126,6 +141,7 @@ export interface StatesData {
       }[]
     },
     ST: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -133,6 +149,7 @@ export interface StatesData {
       }[]
     },
     TH: {
+      name: string,
       history: {
         cases?: number
         deaths?: number
@@ -147,12 +164,6 @@ export interface StatesData {
 export class DataService {
   constructor(private http: HttpClient) { }
   private serviceSubscription: Subscription | undefined;
-  public statesCases!: StatesData;
-  public statesDeaths!: StatesData;
-  public statesRecovered!: StatesData;
-  public germanyCases!: GermanyData;
-  public germanyDeaths!: GermanyData;
-  public germanyRecovered!: GermanyData;
 
   getGermanyCases() {
     return this.http.get<GermanyData>("https://api.corona-zahlen.org/germany/history/cases/28", {observe: "body", responseType: "json"});
@@ -178,29 +189,4 @@ export class DataService {
     return this.http.get<StatesData>("https://api.corona-zahlen.org/states/history/recovered/28", {observe: "body", responseType: "json"});
   }
   
-  getData() {
-    this.serviceSubscription = this.getStatesCases()
-    .subscribe((data: StatesData) =>  this.statesCases = data
-    );
-
-    this.serviceSubscription = this.getStatesDeaths()
-    .subscribe((data: StatesData) =>  this.statesDeaths = data
-    );
-
-    this.serviceSubscription = this.getStatesRecovered()
-    .subscribe((data: StatesData) =>  this.statesRecovered = data
-    );
-
-    this.serviceSubscription = this.getGermanyCases()
-    .subscribe((data: GermanyData) =>  this.germanyCases = data
-    );
-
-    this.serviceSubscription = this.getGermanyDeaths()
-    .subscribe((data: GermanyData) =>  this.germanyDeaths = data
-    );
-
-    this.serviceSubscription = this.getGermanyRecovered()
-    .subscribe((data: GermanyData) =>  this.germanyRecovered = data
-    );
-  }
 }
