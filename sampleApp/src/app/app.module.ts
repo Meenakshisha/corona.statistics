@@ -1,13 +1,3 @@
-/*
- * COPYRIGHT:  EC
- * PROJECT:    GALILEO
- * FILE:       app.module.ts
- * HISTORY:    The change record of this file is available at the end of the file
- * -----------------------------------------------------------------------------
- * EC Proprietary Information. Unauthorised distribution, dissemination or disclosure not allowed.
- * -----------------------------------------------------------------------------
- */
-
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -20,13 +10,11 @@ import {MatSelectModule} from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import {  MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { SplashScreenComponent } from './splash-screen/splash-screen.component';
 import { Ng2GoogleChartsModule, GoogleChartsSettings  } from 'ng2-google-charts';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    SplashScreenComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,

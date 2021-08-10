@@ -1,5 +1,5 @@
-<h2>
-  <form >
+<div class = "form">
+  <form>
     <mat-form-field>
       <mat-select [(ngModel)]="selectedWeek" name="week" (selectionChange)="displayData($event.value)">
         <mat-option *ngFor="let week of weeks" [value]="week.value">
@@ -8,16 +8,16 @@
       </mat-select>
     </mat-form-field>
   </form>
-</h2>
-<div class = "map" >
-  <h2>Covid confirmed Cases!</h2>
+</div>
+<div class = "map">
+  <h2>Covid Cases</h2>
   <google-chart #mychart [data]="cases" *ngIf=mapReady></google-chart>
 </div>
 <div class = "map">
-  <h2>Covid confirmed Deaths!</h2> 
+  <h2>Covid Deaths</h2> 
   <google-chart [data]="deaths" *ngIf=mapReady></google-chart>
 </div>
 <div class = "map">
-  <h2>Covid confirmed Recoveries!</h2>  
+  <h2>Covid Recoveries</h2>  
   <google-chart [data]="recovered" *ngIf=mapReady></google-chart>
 </div>

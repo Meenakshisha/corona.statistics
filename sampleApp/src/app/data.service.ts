@@ -1,13 +1,3 @@
-/*
- * COPYRIGHT:  EC
- * PROJECT:    GALILEO
- * FILE:       data.service.ts
- * HISTORY:    The change record of this file is available at the end of the file
- * -----------------------------------------------------------------------------
- * EC Proprietary Information. Unauthorised distribution, dissemination or disclosure not allowed.
- * -----------------------------------------------------------------------------
- */
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';

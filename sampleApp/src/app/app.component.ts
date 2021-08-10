@@ -1,13 +1,3 @@
-/*
- * COPYRIGHT:  EC
- * PROJECT:    GALILEO
- * FILE:       app.component.ts
- * HISTORY:    The change record of this file is available at the end of the file
- * -----------------------------------------------------------------------------
- * EC Proprietary Information. Unauthorised distribution, dissemination or disclosure not allowed.
- * -----------------------------------------------------------------------------
- */
-
 import {Component} from '@angular/core';
 import { DataService } from "./data.service";
 import { GoogleChartInterface } from 'ng2-google-charts';
@@ -43,10 +33,7 @@ export class AppComponent {
     dataTable: this.states_cases,
     options: {
       region: 'DE',
-      colorAxis: {colors: ['#00F919', '#0FFFE4', '#1FA20F','#156930','#033E3B']},
       resolution: 'provinces',
-      backgroundColor: '#00000',
-      datalessRegionColor: '#00000',
       defaultColor: '#00000',
       'height': 600,
     }
@@ -56,11 +43,8 @@ export class AppComponent {
     dataTable: this.states_deaths,
     options: {
       region: 'DE', 
-      colorAxis: {colors: ['#00F919', '#0FFFE4', '#1FA20F','#156930','#033E3B']},
-      resolution: 'provinces',
-      backgroundColor: '#00000',
-      datalessRegionColor: '#00000',
-      defaultColor: '#00000',
+      resolution: 'provinces',    
+      defaultColor: 'red',
       'height': 600,
     }
   };
@@ -68,12 +52,9 @@ export class AppComponent {
     chartType: 'GeoChart',
     dataTable: this.states_recovered,
     options: {
-      region: 'DE', 
-      colorAxis: {colors: ['#00F919', '#0FFFE4', '#1FA20F','#156930','#033E3B']},
+      region: 'DE',
       resolution: 'provinces',
-      backgroundColor: '#00000',
-      datalessRegionColor: '#00000',
-      defaultColor: '#00000',
+      defaultColor: 'yellow',
       'height': 600,
     }
   };
@@ -103,28 +84,27 @@ export class AppComponent {
       (err)=>{
         console.log(err)
       }
-    );
-    
+    );    
   }
   
   pushCaseData(res, week: number) {
     this.states_cases.push(
-      [res.data.BB.name, this.states_cases[0][1] + String(res.data.BB.history[week].cases)],
-      [res.data.BE.name, this.states_cases[0][1] + String(res.data.BE.history[week].cases)],
-      [res.data.BW.name, this.states_cases[0][1] + String(res.data.BW.history[week].cases)],
-      [res.data.BY.name, this.states_cases[0][1] + String(res.data.BY.history[week].cases)],
-      [res.data.HB.name, this.states_cases[0][1] + String(res.data.HB.history[week].cases)],
-      [res.data.HE.name, this.states_cases[0][1] + String(res.data.HE.history[week].cases)],
-      [res.data.HH.name, this.states_cases[0][1] + String(res.data.HH.history[week].cases)],
-      [res.data.MV.name, this.states_cases[0][1] + String(res.data.MV.history[week].cases)],
-      [res.data.NI.name, this.states_cases[0][1] + String(res.data.NI.history[week].cases)],
-      [res.data.NW.name, this.states_cases[0][1] + String(res.data.NW.history[week].cases)],
-      [res.data.RP.name, this.states_cases[0][1] + String(res.data.RP.history[week].cases)],
-      [res.data.SH.name, this.states_cases[0][1] + String(res.data.SH.history[week].cases)],
-      [res.data.SL.name, this.states_cases[0][1] + String(res.data.SL.history[week].cases)],
-      [res.data.SN.name, this.states_cases[0][1] + String(res.data.SN.history[week].cases)],
-      [res.data.ST.name, this.states_cases[0][1] + String(res.data.ST.history[week].cases)],
-      [res.data.TH.name, this.states_cases[0][1] + String(res.data.TH.history[week].cases)],
+      [res.data.BB.name, res.data.BB.name + ': '+ String(res.data.BB.history[week].cases)],
+      [res.data.BE.name, res.data.BE.name + ': ' + String(res.data.BE.history[week].cases)],
+      [res.data.BW.name, res.data.BW.name + ': ' + String(res.data.BW.history[week].cases)],
+      [res.data.BY.name, res.data.BY.name + ': ' + String(res.data.BY.history[week].cases)],
+      [res.data.HB.name, res.data.HB.name + ': ' + String(res.data.HB.history[week].cases)],
+      [res.data.HE.name, res.data.HE.name + ': ' + String(res.data.HE.history[week].cases)],
+      [res.data.HH.name, res.data.HH.name + ': ' + String(res.data.HH.history[week].cases)],
+      [res.data.MV.name, res.data.MV.name + ': ' + String(res.data.MV.history[week].cases)],
+      [res.data.NI.name, res.data.NI.name + ': ' + String(res.data.NI.history[week].cases)],
+      [res.data.NW.name, res.data.NW.name + ': ' + String(res.data.NW.history[week].cases)],
+      [res.data.RP.name, res.data.RP.name + ': ' + String(res.data.RP.history[week].cases)],
+      [res.data.SH.name, res.data.SH.name + ': ' + String(res.data.SH.history[week].cases)],
+      [res.data.SL.name, res.data.SL.name + ': ' + String(res.data.SL.history[week].cases)],
+      [res.data.SN.name, res.data.SN.name + ': ' + String(res.data.SN.history[week].cases)],
+      [res.data.ST.name, res.data.ST.name + ': ' + String(res.data.ST.history[week].cases)],
+      [res.data.TH.name, res.data.TH.name + ': ' + String(res.data.TH.history[week].cases)],
     );   
     //force a redraw
     this.mapReady=true;
@@ -133,45 +113,45 @@ export class AppComponent {
 
   pushRecoveredData(res, week: number) {
     this.states_recovered.push(
-      [res.data.BB.name, this.states_cases[0][1] + String(res.data.BB.history[week].recovered)],
-      [res.data.BE.name, this.states_cases[0][1] + String(res.data.BE.history[week].recovered)],
-      [res.data.BW.name, this.states_cases[0][1] + String(res.data.BW.history[week].recovered)],
-      [res.data.BY.name, this.states_cases[0][1] + String(res.data.BY.history[week].recovered)],
-      [res.data.HB.name, this.states_cases[0][1] + String(res.data.HB.history[week].recovered)],
-      [res.data.HE.name, this.states_cases[0][1] + String(res.data.HE.history[week].recovered)],
-      [res.data.HH.name, this.states_cases[0][1] + String(res.data.HH.history[week].recovered)],
-      [res.data.MV.name, this.states_cases[0][1] + String(res.data.MV.history[week].recovered)],
-      [res.data.NI.name, this.states_cases[0][1] + String(res.data.NI.history[week].recovered)],
-      [res.data.NW.name, this.states_cases[0][1] + String(res.data.NW.history[week].recovered)],
-      [res.data.RP.name, this.states_cases[0][1] + String(res.data.RP.history[week].recovered)],
-      [res.data.SH.name, this.states_cases[0][1] + String(res.data.SH.history[week].recovered)],
-      [res.data.SL.name, this.states_cases[0][1] + String(res.data.SL.history[week].recovered)],
-      [res.data.SN.name, this.states_cases[0][1] + String(res.data.SN.history[week].recovered)],
-      [res.data.ST.name, this.states_cases[0][1] + String(res.data.ST.history[week].recovered)],
-      [res.data.TH.name, this.states_cases[0][1] + String(res.data.TH.history[week].recovered)],
+      [res.data.BB.name, res.data.BB.name + ': ' + String(res.data.BB.history[week].recovered)],
+      [res.data.BE.name, res.data.BE.name + ': ' + String(res.data.BE.history[week].recovered)],
+      [res.data.BW.name, res.data.BW.name + ': ' + String(res.data.BW.history[week].recovered)],
+      [res.data.BY.name, res.data.BY.name + ': ' + String(res.data.BY.history[week].recovered)],
+      [res.data.HB.name, res.data.HB.name + ': ' + String(res.data.HB.history[week].recovered)],
+      [res.data.HE.name, res.data.HE.name + ': ' + String(res.data.HE.history[week].recovered)],
+      [res.data.HH.name, res.data.HH.name + ': ' + String(res.data.HH.history[week].recovered)],
+      [res.data.MV.name, res.data.MV.name + ': ' + String(res.data.MV.history[week].recovered)],
+      [res.data.NI.name, res.data.NI.name + ': ' + String(res.data.NI.history[week].recovered)],
+      [res.data.NW.name, res.data.NW.name + ': ' + String(res.data.NW.history[week].recovered)],
+      [res.data.RP.name, res.data.RP.name + ': ' + String(res.data.RP.history[week].recovered)],
+      [res.data.SH.name, res.data.SH.name + ': ' + String(res.data.SH.history[week].recovered)],
+      [res.data.SL.name, res.data.SL.name + ': ' + String(res.data.SL.history[week].recovered)],
+      [res.data.SN.name, res.data.SN.name + ': ' + String(res.data.SN.history[week].recovered)],
+      [res.data.ST.name, res.data.ST.name + ': ' + String(res.data.ST.history[week].recovered)],
+      [res.data.TH.name, res.data.TH.name + ': ' + String(res.data.TH.history[week].recovered)],
     );    
     this.mapReady=true;
     this.recovered.component.draw();
   }
-
+ 
   pushDeathData(res, week: number) {
     this.states_deaths.push(
-      [res.data.BB.name, this.states_cases[0][1] + String(res.data.BB.history[week].deaths)],
-      [res.data.BE.name, this.states_cases[0][1] + String(res.data.BE.history[week].deaths)],
-      [res.data.BW.name, this.states_cases[0][1] + String(res.data.BW.history[week].deaths)],
-      [res.data.BY.name, this.states_cases[0][1] + String(res.data.BY.history[week].deaths)],
-      [res.data.HB.name, this.states_cases[0][1] + String(res.data.HB.history[week].deaths)],
-      [res.data.HE.name, this.states_cases[0][1] + String(res.data.HE.history[week].deaths)],
-      [res.data.HH.name, this.states_cases[0][1] + String(res.data.HH.history[week].deaths)],
-      [res.data.MV.name, this.states_cases[0][1] + String(res.data.MV.history[week].deaths)],
-      [res.data.NI.name, this.states_cases[0][1] + String(res.data.NI.history[week].deaths)],
-      [res.data.NW.name, this.states_cases[0][1] + String(res.data.NW.history[week].deaths)],
-      [res.data.RP.name, this.states_cases[0][1] + String(res.data.RP.history[week].deaths)],
-      [res.data.SH.name, this.states_cases[0][1] + String(res.data.SH.history[week].deaths)],
-      [res.data.SL.name, this.states_cases[0][1] + String(res.data.SL.history[week].deaths)],
-      [res.data.SN.name, this.states_cases[0][1] + String(res.data.SN.history[week].deaths)],
-      [res.data.ST.name, this.states_cases[0][1] + String(res.data.ST.history[week].deaths)],
-      [res.data.TH.name, this.states_cases[0][1] + String(res.data.TH.history[week].deaths)],
+      [res.data.BB.name, res.data.BB.name + ': ' + String(res.data.BB.history[week].deaths)],
+      [res.data.BE.name, res.data.BE.name + ': ' + String(res.data.BE.history[week].deaths)],
+      [res.data.BW.name, res.data.BW.name + ': ' + String(res.data.BW.history[week].deaths)],
+      [res.data.BY.name, res.data.BY.name + ': ' + String(res.data.BY.history[week].deaths)],
+      [res.data.HB.name, res.data.HB.name + ': ' + String(res.data.HB.history[week].deaths)],
+      [res.data.HE.name, res.data.HE.name + ': ' + String(res.data.HE.history[week].deaths)],
+      [res.data.HH.name, res.data.HH.name + ': ' + String(res.data.HH.history[week].deaths)],
+      [res.data.MV.name, res.data.MV.name + ': ' + String(res.data.MV.history[week].deaths)],
+      [res.data.NI.name, res.data.NI.name + ': ' + String(res.data.NI.history[week].deaths)],
+      [res.data.NW.name, res.data.NW.name + ': ' + String(res.data.NW.history[week].deaths)],
+      [res.data.RP.name, res.data.RP.name + ': ' + String(res.data.RP.history[week].deaths)],
+      [res.data.SH.name, res.data.SH.name + ': ' + String(res.data.SH.history[week].deaths)],
+      [res.data.SL.name, res.data.SL.name + ': ' + String(res.data.SL.history[week].deaths)],
+      [res.data.SN.name, res.data.SN.name + ': ' + String(res.data.SN.history[week].deaths)],
+      [res.data.ST.name, res.data.ST.name + ': ' + String(res.data.ST.history[week].deaths)],
+      [res.data.TH.name, res.data.TH.name + ': ' + String(res.data.TH.history[week].deaths)],
     );
     this.mapReady=true;
     this.deaths.component.draw();
