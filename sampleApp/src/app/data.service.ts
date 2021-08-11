@@ -1,15 +1,7 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
-export interface Data {
-  statewise: any[];
-  region?: string;
-  cases?: number;
-  deaths?: number;
-  recovered?: number;
-}
 export interface GermanyData {
   data: {
     cases?: number
@@ -17,7 +9,10 @@ export interface GermanyData {
     recovered?: number
   }[]
 }
-
+export interface Weeks {
+  value: number;
+  viewValue: string;
+}
 export interface StatesData {
   data: {
     SH: {
@@ -142,7 +137,7 @@ export interface StatesData {
     },
     TH: {
       name: string,
-      data: {
+      history: {
         cases?: number
         deaths?: number
         recovered?: number
@@ -150,38 +145,37 @@ export interface StatesData {
     }
   }
 }
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class DataService {
+
   constructor(private http: HttpClient) { }
-  private serviceSubscription: Subscription | undefined;
-  getGermanyCases() {
+
+  public getGermanyCases() {
     return this.http.get<GermanyData>("https://api.corona-zahlen.org/germany/history/cases/28", {observe: "body", responseType: "json"});
   }
 
-  getGermanyDeaths() {
+  public getGermanyDeaths() {
     return this.http.get<GermanyData>("https://api.corona-zahlen.org/germany/history/deaths/28", {observe: "body", responseType: "json"});
   }
 
-  getGermanyRecovered() {
+  public getGermanyRecovered() {
     return this.http.get<GermanyData>("https://api.corona-zahlen.org/germany/history/recovered/28", {observe: "body", responseType: "json"});
   }
 
-  getStatesCases() {
+  public getStatesCases() {
     return this.http.get<StatesData>("https://api.corona-zahlen.org/states/history/cases/28", {observe: "body", responseType: "json"});
   }
 
-  getStatesDeaths() {
+  public getStatesDeaths() {
     return this.http.get<StatesData>("https://api.corona-zahlen.org/states/history/deaths/28", {observe: "body", responseType: "json"});
   }
 
-  getStatesRecovered() {
+  public getStatesRecovered() {
     return this.http.get<StatesData>("https://api.corona-zahlen.org/states/history/recovered/28", {observe: "body", responseType: "json"});
-  }
-
-  ngOnInit() {
-    
   }
   
 }

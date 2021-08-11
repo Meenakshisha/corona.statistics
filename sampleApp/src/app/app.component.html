@@ -2,7 +2,7 @@
   <div class="left">
     <form>
       <mat-form-field>
-        <mat-select [(ngModel)]="selectedWeek" name="week" (selectionChange)="displayData($event.value)">
+        <mat-select [(ngModel)]="selectedWeek" name="week" (selectionChange)="displayData($event.value, selectedOption)">
           <mat-option *ngFor="let week of weeks" [value]="week.value">
             {{week.viewValue}}
           </mat-option>
@@ -11,7 +11,7 @@
     </form>
     <form>
       <mat-form-field>
-        <mat-select [(ngModel)]="selectedOption" name="option" (selectionChange)="selection($event.value)">
+        <mat-select [(ngModel)]="selectedOption" name="option" (selectionChange)="displayData(selectedWeek, $event.value)">
           <mat-option *ngFor="let option of options" [value]="option">
             {{option}}
           </mat-option>        
@@ -26,7 +26,7 @@
   </h2>
 </div>
 <div>
-  <google-chart #mychart [data]="cases" *ngIf=case></google-chart>
+  <google-chart [data]="cases" *ngIf=case></google-chart>
 
   <google-chart [data]="deaths" *ngIf=death></google-chart>
 

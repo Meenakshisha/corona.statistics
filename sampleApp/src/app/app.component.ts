@@ -1,13 +1,7 @@
-
 import {Component} from '@angular/core';
-import { DataService, GermanyData } from "./data.service";
+import { DataService, GermanyData, StatesData, Weeks } from "./data.service";
 import { GoogleChartInterface } from 'ng2-google-charts';
 
-
-interface Weeks {
-  value: number;
-  viewValue: string;
-}
 
 @Component({
   selector: 'app-root',
@@ -16,6 +10,7 @@ interface Weeks {
 })
 export class AppComponent {
   
+  // to select time series for covid data
   weeks: Weeks[] = [
     {value: 27, viewValue: 'Latest'},
     {value: 20, viewValue: '1 Week back'},
@@ -23,31 +18,44 @@ export class AppComponent {
     {value: 7, viewValue: '3 Weeks back'},
     {value: 1, viewValue: '4 Weeks back'}
   ];
+
+  //default time series (lastest)
+  selectedWeek: number = 27;  
+
+  //user input to select one of the map
+  options: string[] = ["cases", "deaths", "recovered"]
+
+  //set default option to show cases
+  selectedOption: string = 'cases';
+
+  //set default map to cases
   case = true;
   death = false;
   recovery = false;
-  options: string[] = ["cases", "deaths", "recovered"]
-  selectedWeek: number = 27;
-  selectedOption: string = 'cases';
-  states_cases = [['State','COVID-Confirmed Cases: ']];
-  states_deaths = [['State','COVID-Confirmed Deaths: ']];
-  states_recovered = [['State','COVID-Confirmed Recovered: ']];
-  response: any[]=[];
-  mapReady=false;
-  germanyCases: number = 0;
+  
+  //map data
+  states_cases = [['State','cases']];
+  states_deaths = [['State','deaths']];
+  states_recovered = [['State','recovered']];
+
+  //default value for germany covid numbers
+  germanyCases = 0;
   germanyDeaths = 0;
   germanyRecovered = 0;
-  public germanyCasesData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
-  public germanyDeathData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
-  public germanyRecoveredData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
 
+  //default value for germany data
+  germanyCasesData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
+  germanyDeathData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
+  germanyRecoveredData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
+
+  // Chart Inputs
   public cases: GoogleChartInterface = {
     chartType: 'GeoChart',
     dataTable: this.states_cases,
     options: {
       region: 'DE',
       resolution: 'provinces',
-      defaultColor: '#00000',
+      defaultColor: 'yellowgreen',
       'height': 600,
     }
   };
@@ -71,79 +79,76 @@ export class AppComponent {
       'height': 600,
     }
   };
+
   constructor(public serv: DataService){}
+
   ngOnInit(){
-    this.displayData(27);    
+    this.displayData(27, 'cases');    
   }
 
-  selection(value: string) {
-    switch(value) { 
-      case "recovered": { 
-         this.recovery = true;     
-         this.case = false;
-         this.death = false;
-         break; 
-      } 
-      case "deaths": { 
-         this.death = true;
-         this.case = false;
-         this.recovery = false;
-         break; 
-      } 
-      default: { 
-         this.case = true;
-         this.death = false;
-         this.recovery = false;
-         break; 
-      } 
-    }    
-  }
-  displayData(week:number) {
-    this.serv.getStatesRecovered().subscribe((res)=>{
-      this.pushRecoveredData(res, week);
-      },
-      (err)=>{
-        console.log(err)
-      }
-    );
-    this.serv.getStatesCases().subscribe((res)=>{
-      this.pushCaseData(res, week);
-      },
-      (err)=>{
-        console.log(err)
-      }
-    ); 
-    this.serv.getStatesDeaths().subscribe((res)=>{
-        this.pushDeathData(res, week);
-      },
-      (err)=>{
-        console.log(err)
-      }
-    );
+  //decides which data to display depending on the input provided by user
+  displayData(week:number, option: string) {
+    if(option == "deaths") {
+      this.serv.getStatesDeaths().subscribe((res)=>{
+          this.pushDeathData(res, week);        
+        }, 
+        (err)=>{
+          console.log(err)
+        }
+      );
+      this.death = true;
+      this.case = false;
+      this.recovery = false;
+    } else if(option == "recovered") {
+      this.serv.getStatesRecovered().subscribe((res)=>{
+          this.pushRecoveredData(res, week);
+        },
+        (err)=>{
+          console.log(err)
+        }
+      );
+      this.recovery = true;     
+      this.case = false;
+      this.death = false;
+    } else {
+      this.serv.getStatesCases().subscribe((res)=>{
+          this.pushCaseData(res, week);
+        },
+        (err)=>{
+          console.log(err)
+        }
+      );
+      this.case = true;
+      this.death = false;
+      this.recovery = false;
+    }
+    
+    // display germany's total data 
     this.serv.getGermanyCases().subscribe((res)=>{      
-      this.germanyCasesData = res;
-      this.germanyCases = this.germanyCasesData.data[week].cases;
+        this.germanyCasesData = res;
+        this.germanyCases = this.germanyCasesData.data[week].cases;
       },
       (err)=>{
         console.log(err)
     })
     this.serv.getGermanyDeaths().subscribe((res)=>{      
-      this.germanyDeathData = res;
-      this.germanyDeaths = this.germanyDeathData.data[week].deaths;
+        this.germanyDeathData = res;
+        this.germanyDeaths = this.germanyDeathData.data[week].deaths;
       },
       (err)=>{
         console.log(err)
     })
     this.serv.getGermanyRecovered().subscribe((res)=>{      
-      this.germanyRecoveredData = res;
-      this.germanyRecovered = this.germanyRecoveredData.data[week].recovered;
+        this.germanyRecoveredData = res;
+        this.germanyRecovered = this.germanyRecoveredData.data[week].recovered;
       },
       (err)=>{
         console.log(err)
     })
   }
   
-  pushCaseData(res, week: number) {
+  //push state's cases to map input
+  pushCaseData(res: StatesData, week: number) {
     this.states_cases.push(
       [res.data.BB.name, res.data.BB.name + ': '+ String(res.data.BB.history[week].cases)],
       [res.data.BE.name, res.data.BE.name + ': ' + String(res.data.BE.history[week].cases)],
@@ -162,13 +167,12 @@ export class AppComponent {
       [res.data.ST.name, res.data.ST.name + ': ' + String(res.data.ST.history[week].cases)],
       [res.data.TH.name, res.data.TH.name + ': ' + String(res.data.TH.history[week].cases)],
     );
-
     //force a redraw
-    this.mapReady=true;
     this.cases.component.draw();
   }
 
-  pushRecoveredData(res, week: number) {
+  //push state's recoveries to map input
+  pushRecoveredData(res: StatesData, week: number) {
     this.states_recovered.push(
       [res.data.BB.name, res.data.BB.name + ': ' + String(res.data.BB.history[week].recovered)],
       [res.data.BE.name, res.data.BE.name + ': ' + String(res.data.BE.history[week].recovered)],
@@ -186,12 +190,12 @@ export class AppComponent {
       [res.data.SN.name, res.data.SN.name + ': ' + String(res.data.SN.history[week].recovered)],
       [res.data.ST.name, res.data.ST.name + ': ' + String(res.data.ST.history[week].recovered)],
       [res.data.TH.name, res.data.TH.name + ': ' + String(res.data.TH.history[week].recovered)],
-    );    
-    this.mapReady=true;
+    );
     this.recovered.component.draw();
   }
  
-  pushDeathData(res, week: number) {
+  //push state's deaths to map input
+  pushDeathData(res: StatesData, week: number) {
     this.states_deaths.push(
       [res.data.BB.name, res.data.BB.name + ': ' + String(res.data.BB.history[week].deaths)],
       [res.data.BE.name, res.data.BE.name + ': ' + String(res.data.BE.history[week].deaths)],
@@ -210,7 +214,6 @@ export class AppComponent {
       [res.data.ST.name, res.data.ST.name + ': ' + String(res.data.ST.history[week].deaths)],
       [res.data.TH.name, res.data.TH.name + ': ' + String(res.data.TH.history[week].deaths)],
     );
-    this.mapReady=true;
     this.deaths.component.draw();
   }  
 }
