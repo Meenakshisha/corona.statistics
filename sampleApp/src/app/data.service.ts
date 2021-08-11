@@ -1,6 +1,8 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';
+
 export interface Data {
   statewise: any[];
   region?: string;
@@ -9,7 +11,7 @@ export interface Data {
   recovered?: number;
 }
 export interface GermanyData {
-  history: {
+  data: {
     cases?: number
     deaths?: number
     recovered?: number
@@ -140,7 +142,7 @@ export interface StatesData {
     },
     TH: {
       name: string,
-      history: {
+      data: {
         cases?: number
         deaths?: number
         recovered?: number
@@ -154,7 +156,6 @@ export interface StatesData {
 export class DataService {
   constructor(private http: HttpClient) { }
   private serviceSubscription: Subscription | undefined;
-
   getGermanyCases() {
     return this.http.get<GermanyData>("https://api.corona-zahlen.org/germany/history/cases/28", {observe: "body", responseType: "json"});
   }
@@ -177,6 +178,10 @@ export class DataService {
 
   getStatesRecovered() {
     return this.http.get<StatesData>("https://api.corona-zahlen.org/states/history/recovered/28", {observe: "body", responseType: "json"});
+  }
+
+  ngOnInit() {
+    
   }
   
 }

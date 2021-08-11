@@ -1,5 +1,6 @@
+
 import {Component} from '@angular/core';
-import { DataService } from "./data.service";
+import { DataService, GermanyData } from "./data.service";
 import { GoogleChartInterface } from 'ng2-google-charts';
 
 
@@ -22,12 +23,24 @@ export class AppComponent {
     {value: 7, viewValue: '3 Weeks back'},
     {value: 1, viewValue: '4 Weeks back'}
   ];
+  case = true;
+  death = false;
+  recovery = false;
+  options: string[] = ["cases", "deaths", "recovered"]
   selectedWeek: number = 27;
+  selectedOption: string = 'cases';
   states_cases = [['State','COVID-Confirmed Cases: ']];
   states_deaths = [['State','COVID-Confirmed Deaths: ']];
   states_recovered = [['State','COVID-Confirmed Recovered: ']];
   response: any[]=[];
   mapReady=false;
+  germanyCases: number = 0;
+  germanyDeaths = 0;
+  germanyRecovered = 0;
+  public germanyCasesData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
+  public germanyDeathData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
+  public germanyRecoveredData: GermanyData = {data: [{cases: 0, deaths:0, recovered: 0}]};
+
   public cases: GoogleChartInterface = {
     chartType: 'GeoChart',
     dataTable: this.states_cases,
@@ -60,10 +73,32 @@ export class AppComponent {
   };
   constructor(public serv: DataService){}
   ngOnInit(){
-    this.displayData(27);
+    this.displayData(27);    
+  }
+
+  selection(value: string) {
+    switch(value) { 
+      case "recovered": { 
+         this.recovery = true;     
+         this.case = false;
+         this.death = false;
+         break; 
+      } 
+      case "deaths": { 
+         this.death = true;
+         this.case = false;
+         this.recovery = false;
+         break; 
+      } 
+      default: { 
+         this.case = true;
+         this.death = false;
+         this.recovery = false;
+         break; 
+      } 
+    }    
   }
   displayData(week:number) {
-    console.log(week)    
     this.serv.getStatesRecovered().subscribe((res)=>{
       this.pushRecoveredData(res, week);
       },
@@ -84,7 +119,28 @@ export class AppComponent {
       (err)=>{
         console.log(err)
       }
-    );    
+    );
+    this.serv.getGermanyCases().subscribe((res)=>{      
+      this.germanyCasesData = res;
+      this.germanyCases = this.germanyCasesData.data[week].cases;
+      },
+      (err)=>{
+        console.log(err)
+    })
+    this.serv.getGermanyDeaths().subscribe((res)=>{      
+      this.germanyDeathData = res;
+      this.germanyDeaths = this.germanyDeathData.data[week].deaths;
+      },
+      (err)=>{
+        console.log(err)
+    })
+    this.serv.getGermanyRecovered().subscribe((res)=>{      
+      this.germanyRecoveredData = res;
+      this.germanyRecovered = this.germanyRecoveredData.data[week].recovered;
+      },
+      (err)=>{
+        console.log(err)
+    })
   }
   
   pushCaseData(res, week: number) {
@@ -105,7 +161,8 @@ export class AppComponent {
       [res.data.SN.name, res.data.SN.name + ': ' + String(res.data.SN.history[week].cases)],
       [res.data.ST.name, res.data.ST.name + ': ' + String(res.data.ST.history[week].cases)],
       [res.data.TH.name, res.data.TH.name + ': ' + String(res.data.TH.history[week].cases)],
-    );   
+    );
+
     //force a redraw
     this.mapReady=true;
     this.cases.component.draw();
@@ -155,28 +212,6 @@ export class AppComponent {
     );
     this.mapReady=true;
     this.deaths.component.draw();
-  }
-  
-  /**
-   * regions: Region[] = [
-    {value: 'DE', viewValue: 'Germany'},
-    {value: 'SH', viewValue: 'Schleswig-Holstein'},
-    {value: 'HH', viewValue: 'Hamburg'},
-    {value: 'NI', viewValue: 'Niedersachsen'},
-    {value: 'HB', viewValue: 'Bremen'},
-    {value: 'NW', viewValue: 'Nordrhein-Westfalen'},
-    {value: 'HE', viewValue: 'Hessen'},
-    {value: 'RP', viewValue: 'Rheinland-Pfalz'},
-    {value: 'BW', viewValue: 'Baden-Württemberg'},
-    {value: 'BY', viewValue: 'Bayern'},
-    {value: 'SL', viewValue: 'Saarland'},
-    {value: 'BE', viewValue: 'Berlin'},
-    {value: 'BB', viewValue: 'Brandenburg'},
-    {value: 'MV', viewValue: 'Mecklenburg-Vorpommern'},
-    {value: 'SN', viewValue: 'Sachsen'},
-    {value: 'ST', viewValue: 'Sachsen-Anhalt'},
-    {value: 'TH', viewValue: 'Thüringen'}
-  ];
-   */
+  }  
 }
 

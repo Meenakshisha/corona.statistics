@@ -1,23 +1,34 @@
-<div class = "form">
-  <form>
-    <mat-form-field>
-      <mat-select [(ngModel)]="selectedWeek" name="week" (selectionChange)="displayData($event.value)">
-        <mat-option *ngFor="let week of weeks" [value]="week.value">
-          {{week.viewValue}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </form>
+<div class="formfield">
+  <div class="left">
+    <form>
+      <mat-form-field>
+        <mat-select [(ngModel)]="selectedWeek" name="week" (selectionChange)="displayData($event.value)">
+          <mat-option *ngFor="let week of weeks" [value]="week.value">
+            {{week.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+    <form>
+      <mat-form-field>
+        <mat-select [(ngModel)]="selectedOption" name="option" (selectionChange)="selection($event.value)">
+          <mat-option *ngFor="let option of options" [value]="option">
+            {{option}}
+          </mat-option>        
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </div>
+  <h2 class="right"> Germany
+    <li>Total Cases: {{germanyCases}}</li>
+    <li>Total Deaths: {{germanyDeaths}}</li>
+    <li>Total Recovered: {{germanyRecovered}}</li>
+  </h2>
 </div>
-<div class = "map">
-  <h2>Covid Cases</h2>
-  <google-chart #mychart [data]="cases" *ngIf=mapReady></google-chart>
-</div>
-<div class = "map">
-  <h2>Covid Deaths</h2> 
-  <google-chart [data]="deaths" *ngIf=mapReady></google-chart>
-</div>
-<div class = "map">
-  <h2>Covid Recoveries</h2>  
-  <google-chart [data]="recovered" *ngIf=mapReady></google-chart>
+<div>
+  <google-chart #mychart [data]="cases" *ngIf=case></google-chart>
+
+  <google-chart [data]="deaths" *ngIf=death></google-chart>
+
+  <google-chart [data]="recovered" *ngIf=recovery></google-chart>
 </div>
